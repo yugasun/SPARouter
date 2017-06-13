@@ -1,16 +1,18 @@
 # 前端路由实现之 - hash
 
-**运行效果图**
+**运行效果图**  
 ![](http://o6sbyl9mg.bkt.clouddn.com/14973245321228.jpg?attname=&e=1497328179&token=U66r3n2i5yp6BFinWLOReh8Ixk7rAxs8Cv6DEYiB:CwSXP-Sepb7ZXGD-QMGUrrl3Xug)
 
 
 ## 背景介绍
 
-许多前端框架 `backbone，angular，vue` 他们都有各自的路由系统，管理着前端的每一个页面切换，想要理解其中路由的实现，如果想了解其原理，最好就是就是手动实现一个。
+许多前端框架 `angular，vue，react` 他们都有各自的路由系统，管理着前端的页面视图切换，如果想了解其原理，最好方法就是手动实现一个。
 `SPA`的前端路由有2种实现方式:
 
 * 一种是HTML5推出的 [History API](https://developer.mozilla.org/en-US/docs/Web/API/History)
 * 另一种 `hash` 路由，就是常见的 `#` 号，这种方式兼容性更好。
+
+<!-- more -->
 
 ## 需求分析
 
@@ -175,3 +177,4 @@ loadComponent() {
 这样我们就完成了一个简单的hash路由了，可以将其应用到实际的SPA项目，快乐的玩耍了，不过还是有很多不完备的地方，感兴趣的可以继续完善，使其变得更加健壮，下一遍将介绍如何利用HTML5的 [History API](https://developer.mozilla.org/en-US/docs/Web/API/History) 来实现 `history` 模式的路由，尽请期待~。
 
 最后附上，完整的 [DEMO](https://github.com/yugasun/SPARouter.git)
+
