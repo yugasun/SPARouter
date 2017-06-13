@@ -1,8 +1,4 @@
-# 前端路由实现之 - hash
-
-**运行效果图**  
-![](http://o6sbyl9mg.bkt.clouddn.com/14973245321228.jpg?attname=&e=1497328179&token=U66r3n2i5yp6BFinWLOReh8Ixk7rAxs8Cv6DEYiB:CwSXP-Sepb7ZXGD-QMGUrrl3Xug)
-
+# 前端路由实现 - hash篇
 
 ## 背景介绍
 
@@ -174,7 +170,11 @@ loadComponent() {
     }    
     ```
     
-这样我们就完成了一个简单的hash路由了，可以将其应用到实际的SPA项目，快乐的玩耍了，不过还是有很多不完备的地方，感兴趣的可以继续完善，使其变得更加健壮，下一遍将介绍如何利用HTML5的 [History API](https://developer.mozilla.org/en-US/docs/Web/API/History) 来实现 `history` 模式的路由，尽请期待~。
+这样我们就完成了一个简单的hash路由了，可以将其应用到实际的SPA项目，快乐的玩耍了，不过还是有很多不完备的地方，感兴趣的可以继续完善，使其变得更加健壮。
+
+**运行效果图**  
+![](http://o6sbyl9mg.bkt.clouddn.com/14973245321228.jpg?attname=&e=1497328179&token=U66r3n2i5yp6BFinWLOReh8Ixk7rAxs8Cv6DEYiB:CwSXP-Sepb7ZXGD-QMGUrrl3Xug)
+
+下一篇将介绍如何利用HTML5的 [History API](https://developer.mozilla.org/en-US/docs/Web/API/History) 来实现 `history` 模式的路由，尽请期待~。
 
 最后附上，完整的 [DEMO](https://github.com/yugasun/SPARouter.git)
-
