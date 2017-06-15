@@ -63,7 +63,7 @@
       }
     ]
     var el = document.getElementById('router-view');
-    var router = new SPARouter(el, routes);
+    var router = new SPARouter(el, routes, 'hash');
     router.beforeEach((to, next) => {
       console.log('切换之前dosomething')
       setTimeout(function () {

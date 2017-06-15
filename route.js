@@ -16,6 +16,23 @@ class Utils {
 
     return {path: hashName, query: query};
   }
+  getHistoryRoute() {
+    let path = (window.history.state && window.history.state.path) || '';
+    let queryStr = window
+      .location
+      .hash
+      .split('?')[1];
+    let params = queryStr
+      ? queryStr.split('&')
+      : [];
+    let query = {};
+    params.map((item) => {
+      let temp = item.split('=');
+      query[temp[0]] = temp[1];
+    });
+
+    return {path: path, query: query};
+  }
 }
 
 /**
@@ -26,8 +43,9 @@ class Utils {
  */
 
 class SPARouter {
-  constructor(el, routers) {
+  constructor(el, routers, mode) {
     this.el = el;
+    this.mode = mode || 'hash';
     this.utils = new Utils();
     this.currentRoute = {};
     this.beforeFunc = null;
@@ -50,38 +68,67 @@ class SPARouter {
       console.log('load')
       this.routeUpdate();
     });
-    window.addEventListener('hashchange', () => {
-      console.log('hashchange')
-      this.routeUpdate();
-    });
+    if (this.mode === 'history') {
+      window.addEventListener('popstate', (e) => {
+        console.log('popstate')
+        this.routeUpdate();
+      });
+      // 禁用所有a 链接默认跳转事件
+      let self = this;
+      document.addEventListener('click', function (e) {
+        let target = e.target || e.srcElement;
+        if (target.tagName === 'A') {
+          e.preventDefault();
+          let href = target.getAttribute('href');
+          let path = href.split('?')[0];
+          window
+            .history
+            .pushState({
+              path: path
+            }, null, href);
+          self.routeUpdate();
+        }
+      })
+    } else {
+      window.addEventListener('hashchange', () => {
+        console.log('hashchange')
+        this.routeUpdate();
+      });
+    }
   }
   loadComponent() {
     let self = this;
-    if (this.currentRoute.filename) {
-      var _body = document.getElementsByTagName('body')[0];
-      var scriptEle = document.createElement('script');
-      scriptEle.src = self.currentRoute.filename;
-      scriptEle.async = true;
-      scriptEle.type = 'text/javascript';
-      window.SPA_ROUTE_INIT = null;
-      scriptEle.onload = () => {
-        self.afterFunc && self.afterFunc(self.currentRoute);
-        self.currentRoute.fn = window.SPA_RESOLVE_INIT;
-        self
-          .currentRoute
-          .fn(self.el, self.currentRoute);
-      }
-      _body.appendChild(scriptEle);
+    if (typeof(self.currentRoute.fn) === 'function') {
+      self
+        .currentRoute
+        .fn(self.el, self.currentRoute);
     } else {
-      if (self.currentRoute.initFunc) {
-        self
-          .currentRoute
-          .initFunc(self.el, self.currentRoute);
-        self.afterFunc && self.afterFunc(self.currentRoute);
+      if (this.currentRoute.filename) {
+        var _body = document.getElementsByTagName('body')[0];
+        var scriptEle = document.createElement('script');
+        scriptEle.src = self.currentRoute.filename;
+        scriptEle.async = true;
+        scriptEle.type = 'text/javascript';
+        window.SPA_ROUTE_INIT = null;
+        scriptEle.onload = () => {
+          self.afterFunc && self.afterFunc(self.currentRoute);
+          self.currentRoute.fn = window.SPA_RESOLVE_INIT;
+          self
+            .currentRoute
+            .fn(self.el, self.currentRoute);
+        }
+        _body.appendChild(scriptEle);
       } else {
-        console.trace('该路由定义出错，filename 和 initFunc 必须定义一个')
-      }
+        if (self.currentRoute.initFunc) {
+          self
+            .currentRoute
+            .initFunc(self.el, self.currentRoute);
+          self.afterFunc && self.afterFunc(self.currentRoute);
+        } else {
+          console.trace('该路由定义出错，filename 和 initFunc 必须定义一个')
+        }
 
+      }
     }
 
   }
@@ -100,20 +147,31 @@ class SPARouter {
 
   }
   routeUpdate() {
-    let currentHash = this
-      .utils
-      .getHashRoute();
-    this.currentRoute.query = currentHash['query']
+    let getLocation = this.mode === 'history'
+      ? this.utils.getHistoryRoute
+      : this.utils.getHashRoute;
+    let currentLocation = getLocation();
+    this.currentRoute.query = currentLocation['query']
     this
       .routers
       .map((item) => {
-        if (item.path === currentHash.path) {
+        if (item.path === currentLocation.path) {
           this.currentRoute = item;
           this.refresh();
         }
       });
     if (!this.currentRoute.path) {
-      location.hash = '/index';
+      if (this.mode === 'history') {
+        window
+          .history
+          .pushState({
+            path: '/index'
+          }, null, '/index');
+        this.routeUpdate();
+      } else {
+        location.hash = '/index';
+      }
+
     }
   }
   beforeEach(callback) {
